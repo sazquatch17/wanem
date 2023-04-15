@@ -5,9 +5,10 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
   const user = useUser();
+
+  const { data } = api.migraines.getAll.useQuery();
+
   return (
     <>
       <Head>
@@ -20,7 +21,6 @@ const Home: NextPage = () => {
           {!user.isSignedIn && <SignInButton />}
           {!!user.isSignedIn && <SignOutButton />}
         </div>
-        <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
       </main>
     </>
   );
