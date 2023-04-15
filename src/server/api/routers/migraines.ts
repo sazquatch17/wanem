@@ -1,5 +1,6 @@
 import type { User } from "@clerk/nextjs/dist/api";
 import { clerkClient } from "@clerk/nextjs/server";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -23,10 +24,22 @@ export const migrainesRouter = createTRPCRouter({
       limit: 100,
     })).map(filerUserForClient);
 
-    return migraines.map((migraine) => ({
-      migraine,
-      user: users.find((user) => user.id === migraine.userId),
-    }));
 
+    return migraines.map((migraine) => {
+      const user = users.find((user) => user.id === migraine.userId);
+      if(!user || !user.username) 
+        throw new TRPCError(
+          {code: "INTERNAL_SERVER_ERROR",
+          message: "User for migraine not found"
+        });
+
+      return {
+      migraine,
+      user: {
+        ...user,
+        username:user.username,
+      },
+    };
+  });
   }),
 });

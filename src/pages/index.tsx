@@ -2,7 +2,13 @@ import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
 
-import { api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
+
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import Image from "next/image";
+
+dayjs.extend(relativeTime);
 
 const CreateMigraineWizard = () => {
 
@@ -12,10 +18,12 @@ const CreateMigraineWizard = () => {
 
   return (
     <div className="flex gap-3 w-full">
-      <img 
+      <Image 
         src={user.profileImageUrl}
         alt="Profile Image"
         className="w-14 h-14 rounded-full"
+        width={56}
+        height={56}
       />
       <input 
         placeholder="Enter some Content" 
@@ -24,7 +32,30 @@ const CreateMigraineWizard = () => {
     </div>
 
   )
-}
+};
+
+type MigraineWithUser = RouterOutputs["migraines"]["getAll"][number];
+const MigrainView = (props: MigraineWithUser) => {
+  const {migraine, user} = props;
+  return (
+    <div key={migraine.id} className="border-b border-slate-400 p-4 flex">
+      <Image 
+        src={user.profileImageUrl}
+        className="w-14 h-14 rounded-full"
+        alt={` ${user.username}'s Profile Image`}
+        width={56}
+        height={56}
+      />
+      <div>
+        <div className="flex text-slate-100 gap-1">
+          <span>{user.username}</span>
+          <span className="font-thin">{`· ${dayjs(migraine.createdAt).fromNow()}`}</span>
+        </div>
+        <span>{migraine.content}</span>
+      </div>
+    </div>
+  )
+};
 
 const Home: NextPage = () => {
   const user = useUser();
@@ -56,11 +87,9 @@ const Home: NextPage = () => {
           )}
         </div>
         <div className="flex flex-col">
-          {[...data, ...data]?.map((migraine, user) => (
-            <div key={migraine.migraine.id} className="border-b border-slate-400 p-8">
-              {migraine.migraine.content}
-            </div>
-          ))}
+        {[...data, ...data]?.map((fullMigraine) => (
+          <MigrainView {...fullMigraine} key={fullMigraine.migraine.id}/>
+        ))}
         </div>
       </main>
     </>
