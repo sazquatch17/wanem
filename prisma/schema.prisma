@@ -16,6 +16,6 @@ model Migrane {
     createdAt DateTime @default(now())
 
     userId String
-
+    content String @db.VarChar(255)
     @@index([userId])
 }

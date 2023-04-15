@@ -21,6 +21,9 @@ const Home: NextPage = () => {
           {!user.isSignedIn && <SignInButton />}
           {!!user.isSignedIn && <SignOutButton />}
         </div>
+        <div>
+          {data?.map((migraine) => (<div key={migraine.id}>{migraine.content}</div>))}
+        </div>
       </main>
     </>
   );
