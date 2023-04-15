@@ -57,8 +57,8 @@ const Home: NextPage = () => {
         </div>
         <div className="flex flex-col">
           {[...data, ...data]?.map((migraine, user) => (
-            <div key={migraine.id} className="border-b border-slate-400 p-8">
-              {migraine.content}
+            <div key={migraine.migraine.id} className="border-b border-slate-400 p-8">
+              {migraine.migraine.content}
             </div>
           ))}
         </div>
